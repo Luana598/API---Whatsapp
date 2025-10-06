@@ -36,12 +36,10 @@ app.use((request, response, next) => {
 //função 01
 app.get('/v1/whatsapp/usuarios', function(request, response){
 
-    //Pesquisa na função
     let usuarios = dados.getAllData()
 
-    //retorna o status code
     response.status(usuarios.status_code)
-    //retorna o JSON
+
     response.json(usuarios)
 })
 
@@ -49,16 +47,59 @@ app.get('/v1/whatsapp/usuarios', function(request, response){
 app.get('/v1/whatsapp/usuario/:number', function(request, response){
     let number = request.params.number
 
-    //Pesquisa na função
     let usuario = dados.getProfileInfo(number)
 
-    //retorna o status code
     response.status(usuario.status_code)
-    //retorna o JSON
+    
     response.json(usuario)
 })
 
+//função 03
+app.get('/v1/whatsapp/contatos/:number', function(request, response){
+    let number = request.params.number
 
+    let contacts = dados.getContactInfo(number)
+
+    response.status(contacts.status_code)
+    
+    response.json(contacts)
+})
+
+//função 04
+app.get('/v1/whatsapp/mensagens/:number', function(request, response){
+    let number = request.params.number
+
+    let messages = dados.getAllUserMessages(number)
+
+    response.status(messages.status_code)
+    
+    response.json(messages)
+})
+
+//função 05
+app.get('/v1/whatsapp/conversa', function(request, response){
+    let number = request.query.number
+    let contactNumber = request.query.contact
+
+    let messages = dados.getMessagesToContact(number, contactNumber)
+
+    response.status(messages.status_code)
+    
+    response.json(messages)
+})
+
+//função 06
+app.get('/v1/whatsapp/palavra-chave', function(request, response){
+    let number = request.query.number
+    let contactNumber = request.query.contact
+    let keyword = request.query.keyword
+
+    let messages = dados.getFilterByKeyword(keyword, number, contactNumber)
+
+    response.status(messages.status_code)
+    
+    response.json(messages)
+})
 
 //Start na API
 app.listen(PORT, function(){

@@ -10,7 +10,7 @@ const MESSAGE_ERRO = { status: false, status_code: 500, development: "Luana M. L
 const { connect } = require('http2')
 const dados = require('./contatos.js')
 
-const getAllData = function (){
+const getAllData = function () {
 
     let message = {
         status: true,
@@ -26,7 +26,7 @@ const getAllData = function (){
         return MESSAGE_ERRO //saída falsa (500)
 }
 
-const getProfileInfo = function (number){
+const getProfileInfo = function (number) {
     let message = {
         status: true,
         status_code: 200,
@@ -42,48 +42,161 @@ const getProfileInfo = function (number){
     message.userName = usuario.account
     message.nickname = usuario.nickname
     message.background = usuario.background
-    message.creation =  usuario['created-since']
+    message.creation = usuario['created-since']
     message.profileImage = usuario['profile-image']
-    
-   
-  
-     if (message.number.length > 0)
-         return message //saída verdadeira (200)
-     else
-         return MESSAGE_ERRO //saída falsa (500)
+
+
+
+    if (message.number.length > 0)
+        return message //saída verdadeira (200)
+    else
+        return MESSAGE_ERRO //saída falsa (500)
 
 }
 
-const getContactInfo = function (number){
+const getContactInfo = function (number) {
 
-     let message = {
+    let message = {
         status: true,
         status_code: 200,
-         development: "Luana M. Lopes Bomfim",
-         contatos: []
+        development: "Luana M. Lopes Bomfim",
     }
 
     let usuario = dados.contatos['whats-users'].find(function (item) {
         return item.number === number
     })
 
+    let userContacts = []
 
-        
-    message.contatos = usuario.contacts
+    usuario.contacts.forEach(contato => {
+        userContacts.push({
+            contactName: contato.name,
+            profileImage: contato.image,
+            description: contato.description,
+            Number: contato.number
+        })
 
+    })
 
+    message.contacts = userContacts
 
-    console.log(message)
+    if (message.contacts.length > 0)
+        return message //saída verdadeira (200)
+    else
+        return MESSAGE_ERRO //saída falsa (500)
 
 }
 
-const getUserMessages = function (){
+const getAllUserMessages = function (number) {
+    let message = {
+        status: true,
+        status_code: 200,
+        development: "Luana M. Lopes Bomfim",
+    }
+
+    let usuario = dados.contatos['whats-users'].find(function (item) {
+        return item.number === number
+    })
+
+    let allMessages = []
+
+    usuario.contacts.forEach(contato => {
+        allMessages.push(contato.messages)
+    })
+
+    message.User = usuario.account
+    message.UserMessages = allMessages
+
+
+    if (message.UserMessages.length > 0)
+        return message //saída verdadeira (200)
+    else
+        return MESSAGE_ERRO //saída falsa (500)
 
 }
 
-getContactInfo('11966578996')
+const getMessagesToContact = function (number, contactNumber) {
+    let message = {
+        status: true,
+        status_code: 200,
+        development: "Luana M. Lopes Bomfim",
+    }
+
+
+    let usuario = dados.contatos['whats-users'].find(function (item) {
+        return item.number === number
+    })
+
+    let contato = usuario.contacts.find(function (contact) {
+        return contact.number === contactNumber
+    })
+
+    message.userName = usuario.account
+    message.contactName = contato.name
+    message.conversation = contato.messages
+
+    if (message.conversation.length > 0)
+        return message //saída verdadeira (200)
+    else
+        return MESSAGE_ERRO //saída falsa (500)
+}
+
+const getFilterByKeyword = function (keyword, number, contactNumber) {
+    let message = {
+        status: true,
+        status_code: 200,
+        development: "Luana M. Lopes Bomfim",
+    }
+
+
+    let usuario = dados.contatos['whats-users'].find(function (item) {
+        return item.number === number
+    })
+
+    
+  if (!usuario) {
+    return {
+      status: false,
+      status_code: 404,
+      message: "Usuário não encontrado"
+    }
+  }
+
+    let contato = usuario.contacts.find(function (contact) {
+        return contact.number === contactNumber
+    })
+
+
+    if (!contato) {
+        return {
+            status: false,
+            status_code: 404,
+            message: "Contato não encontrado"
+        }
+    }
+
+
+    // filter todas ascria um array mensagens que passam na condição
+    let result = contato.messages.filter(msg =>
+        msg.content.toLowerCase().includes(keyword.toLowerCase())
+    )
+
+    message.userName = usuario.account
+    message.contactName = contato.name
+    message.ResearchResult = result
+
+    if (message.ResearchResult.length > 0)
+        return message //saída verdadeira (200)
+    else
+        return MESSAGE_ERRO //saída falsa (500)
+
+}
 
 module.exports = {
     getAllData,
-    getProfileInfo
+    getProfileInfo,
+    getContactInfo,
+    getAllUserMessages,
+    getMessagesToContact,
+    getFilterByKeyword
 }
