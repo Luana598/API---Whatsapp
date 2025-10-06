@@ -153,14 +153,14 @@ const getFilterByKeyword = function (keyword, number, contactNumber) {
         return item.number === number
     })
 
-    
-  if (!usuario) {
-    return {
-      status: false,
-      status_code: 404,
-      message: "Usuário não encontrado"
+
+    if (!usuario) {
+        return {
+            status: false,
+            status_code: 404,
+            message: "Usuário não encontrado"
+        }
     }
-  }
 
     let contato = usuario.contacts.find(function (contact) {
         return contact.number === contactNumber
