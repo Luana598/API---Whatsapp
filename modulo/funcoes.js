@@ -7,7 +7,7 @@
 
 const MESSAGE_ERRO = { status: false, status_code: 500, development: "Luana M. Lopes Bomfim" }
 
-const { connect } = require('http2')
+
 const dados = require('./contatos.js')
 
 const getAllData = function () {
